@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { AcademicAgent } from '@/lib/agents/academicAgent';
 
 const agents = {
@@ -10,16 +10,19 @@ const agents = {
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { type: string } }
-) {
+type RouteSegment = {
+  params: {
+    type: string;
+  };
+};
+
+export async function POST(req: NextRequest, { params }: RouteSegment) {
   try {
     const { type } = params;
-    const { message, userId } = await request.json();
+    const { message, userId } = await req.json();
 
     if (!message || !userId) {
-      return NextResponse.json(
+      return Response.json(
         { error: 'Message and userId are required' },
         { status: 400 }
       );
@@ -27,35 +30,32 @@ export async function POST(
 
     const agent = agents[type as keyof typeof agents];
     if (!agent) {
-      return NextResponse.json(
+      return Response.json(
         { error: 'Invalid agent type' },
         { status: 400 }
       );
     }
 
     const response = await agent.processMessage(message, userId);
-    return NextResponse.json(response);
+    return Response.json(response);
 
   } catch (error) {
     console.error('Error in agent chat:', error);
-    return NextResponse.json(
+    return Response.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { type: string } }
-) {
+export async function GET(req: NextRequest, { params }: RouteSegment) {
   try {
     const { type } = params;
-    const searchParams = request.nextUrl.searchParams;
+    const searchParams = req.nextUrl.searchParams;
     const userId = searchParams.get('userId');
 
     if (!userId) {
-      return NextResponse.json(
+      return Response.json(
         { error: 'userId is required' },
         { status: 400 }
       );
@@ -63,18 +63,18 @@ export async function GET(
 
     const agent = agents[type as keyof typeof agents];
     if (!agent) {
-      return NextResponse.json(
+      return Response.json(
         { error: 'Invalid agent type' },
         { status: 400 }
       );
     }
 
     const history = await agent.getHistory(userId);
-    return NextResponse.json({ history });
+    return Response.json({ history });
 
   } catch (error) {
     console.error('Error fetching chat history:', error);
-    return NextResponse.json(
+    return Response.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
