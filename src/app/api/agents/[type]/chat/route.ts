@@ -6,20 +6,23 @@ const agents = {
   // Add other agents here as they are implemented
 };
 
-// Define the route segment config
+// Configure route segment
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-interface Props {
+// Define the exact Next.js App Router types
+type Context = {
   params: { type: string }
+  searchParams: { [key: string]: string | string[] | undefined }
 }
 
 export async function POST(
-  request: NextRequest,
-  props: Props
+  request: Request,
+  context: Context
 ) {
   try {
-    const { type } = props.params;
+    const { type } = context.params;
     const { message, userId } = await request.json();
 
     if (!message || !userId) {
@@ -65,13 +68,13 @@ export async function POST(
 }
 
 export async function GET(
-  request: NextRequest,
-  props: Props
+  request: Request,
+  context: Context
 ) {
   try {
-    const { type } = props.params;
-    const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const { type } = context.params;
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId');
 
     if (!userId) {
       return new Response(
