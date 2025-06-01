@@ -10,73 +10,107 @@ const agents = {
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
-type RouteSegment = {
-  params: {
-    type: string;
-  };
-};
+interface Props {
+  params: { type: string }
+}
 
-export async function POST(req: NextRequest, { params }: RouteSegment) {
+export async function POST(
+  request: NextRequest,
+  props: Props
+) {
   try {
-    const { type } = params;
-    const { message, userId } = await req.json();
+    const { type } = props.params;
+    const { message, userId } = await request.json();
 
     if (!message || !userId) {
-      return Response.json(
-        { error: 'Message and userId are required' },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: 'Message and userId are required' }),
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
     const agent = agents[type as keyof typeof agents];
     if (!agent) {
-      return Response.json(
-        { error: 'Invalid agent type' },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: 'Invalid agent type' }),
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
     const response = await agent.processMessage(message, userId);
-    return Response.json(response);
+    return new Response(
+      JSON.stringify(response),
+      { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
 
   } catch (error) {
     console.error('Error in agent chat:', error);
-    return Response.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 }
 
-export async function GET(req: NextRequest, { params }: RouteSegment) {
+export async function GET(
+  request: NextRequest,
+  props: Props
+) {
   try {
-    const { type } = params;
-    const searchParams = req.nextUrl.searchParams;
+    const { type } = props.params;
+    const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get('userId');
 
     if (!userId) {
-      return Response.json(
-        { error: 'userId is required' },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: 'userId is required' }),
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
     const agent = agents[type as keyof typeof agents];
     if (!agent) {
-      return Response.json(
-        { error: 'Invalid agent type' },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: 'Invalid agent type' }),
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
     const history = await agent.getHistory(userId);
-    return Response.json({ history });
+    return new Response(
+      JSON.stringify({ history }),
+      { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
 
   } catch (error) {
     console.error('Error fetching chat history:', error);
-    return Response.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 } 
