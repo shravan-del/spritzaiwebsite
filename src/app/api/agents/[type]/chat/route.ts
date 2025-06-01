@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { AcademicAgent } from '@/lib/agents/academicAgent';
 
 const agents = {
@@ -7,7 +7,7 @@ const agents = {
 };
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { type: string } }
 ) {
   try {
@@ -42,12 +42,12 @@ export async function POST(
 }
 
 export async function GET(
-  request: Request,
-  { params }: { params: { type: string } }
+  request: NextRequest,
+  context: { params: { type: string } }
 ) {
   try {
-    const { type } = params;
-    const { searchParams } = new URL(request.url);
+    const { type } = context.params;
+    const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get('userId');
 
     if (!userId) {
