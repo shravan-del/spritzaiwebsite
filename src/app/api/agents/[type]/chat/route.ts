@@ -6,18 +6,16 @@ const agents = {
   // Add other agents here as they are implemented
 };
 
-export type ChatRouteContext = {
-  params: {
-    type: string;
-  };
-};
+// Define the route segment config
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 export async function POST(
   request: NextRequest,
-  context: ChatRouteContext
+  { params }: { params: { type: string } }
 ) {
   try {
-    const { type } = context.params;
+    const { type } = params;
     const { message, userId } = await request.json();
 
     if (!message || !userId) {
@@ -49,10 +47,10 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  context: ChatRouteContext
+  { params }: { params: { type: string } }
 ) {
   try {
-    const { type } = context.params;
+    const { type } = params;
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get('userId');
 
