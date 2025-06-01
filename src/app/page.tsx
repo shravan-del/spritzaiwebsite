@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import Link from 'next/link'
 
 export default function Home() {
@@ -177,30 +176,5 @@ export default function Home() {
         </div>
       </section>
     </>
-=======
-import ClientAgentChat from '@/components/ClientAgentChat'
-
-export default function Home() {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">Academic Advisor AI</h1>
-        <p className="text-xl text-gray-600">
-          Your personal guide to academic success at Virginia Tech
-        </p>
-      </header>
-
-      <div className="max-w-3xl mx-auto">
-        <ClientAgentChat />
-      </div>
-
-      <footer className="mt-8 text-center text-sm text-gray-500">
-        <div className="flex justify-center gap-4">
-          <button className="hover:text-gray-700">⚙️ Preferences</button>
-          <button className="hover:text-gray-700">📋 Create Study Plan</button>
-        </div>
-      </footer>
-    </div>
->>>>>>> 4309a5b450abed16e462f95ffd6124eb0f9ae403
   )
 }
