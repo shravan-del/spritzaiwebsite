@@ -6,12 +6,18 @@ const agents = {
   // Add other agents here as they are implemented
 };
 
+export type ChatRouteContext = {
+  params: {
+    type: string;
+  };
+};
+
 export async function POST(
   request: NextRequest,
-  { params }: { params: { type: string } }
+  context: ChatRouteContext
 ) {
   try {
-    const { type } = params;
+    const { type } = context.params;
     const { message, userId } = await request.json();
 
     if (!message || !userId) {
@@ -43,7 +49,7 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  context: { params: { type: string } }
+  context: ChatRouteContext
 ) {
   try {
     const { type } = context.params;
