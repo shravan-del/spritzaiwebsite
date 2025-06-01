@@ -1,13 +1,6 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
+  root: true,
   extends: ['next'],
-  settings: {
-    next: {
-      rootDir: __dirname,
-    },
-  },
-  ignorePatterns: ['node_modules/', '.next/', 'out/'],
-  rules: {
-    '@next/next/no-html-link-for-pages': 'off',
-  },
+  ignorePatterns: ['.next/', 'node_modules/']
 } 
