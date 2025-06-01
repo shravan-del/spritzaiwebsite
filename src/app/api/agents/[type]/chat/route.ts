@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server';
 import { AcademicAgent } from '@/lib/agents/academicAgent';
 
 const agents = {
@@ -8,13 +9,10 @@ const agents = {
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
-export async function POST(
-  req: Request,
-  { params }: { params: { type: string } }
-) {
+export async function POST(request: NextRequest) {
   try {
-    const { type } = params;
-    const { message, userId } = await req.json();
+    const type = request.nextUrl.pathname.split('/').pop();
+    const { message, userId } = await request.json();
 
     if (!message || !userId) {
       return Response.json(
@@ -43,14 +41,10 @@ export async function POST(
   }
 }
 
-export async function GET(
-  req: Request,
-  { params }: { params: { type: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
-    const { type } = params;
-    const url = new URL(req.url);
-    const userId = url.searchParams.get('userId');
+    const type = request.nextUrl.pathname.split('/').pop();
+    const userId = request.nextUrl.searchParams.get('userId');
 
     if (!userId) {
       return Response.json(
